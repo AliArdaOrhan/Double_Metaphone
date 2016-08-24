@@ -6,7 +6,7 @@ create or replace package p_double_metaphone is
 
   -------------------------------------Main-------------------------------------
 
-  function calculate_result(str_value     in varchar2,
+  function calculate(str_value     in varchar2,
                             str_alternate in out varchar2) return varchar2;
 
   ---------------HANDLERS_------------------
@@ -152,9 +152,10 @@ create or replace package p_double_metaphone is
   -------------------------------------------------------------------
 end p_double_metaphone;
 /
+
 create or replace package body p_double_metaphone is
   -------------DECLARATIONS START------------------------
-  function calculate_result(str_value     in varchar2,
+  function calculate(str_value     in varchar2,
                             str_alternate in out varchar2) return varchar2 is
     ch_index        number;
     str_result      varchar2(50);
@@ -315,7 +316,7 @@ create or replace package body p_double_metaphone is
                                str_alternate,
                                ch_index,
                                isslavogermanic);
-        
+
         else
           ch_index := ch_index + 1;
       end case;
@@ -397,7 +398,7 @@ create or replace package body p_double_metaphone is
     elsif (substr(str_value, ch_index, 2) = 'CC' and
           (ch_index = 1 and char_at(str_value, 1) = 'M') = false) then
       return handle_cc(str_value, str_result, str_alternate, ch_index);
-    
+
     elsif (is_contain(substr(str_value, ch_index, 2), 'CK,CG,CQ')) then
       str_result    := concat(str_result, 'K');
       str_alternate := concat(str_alternate, 'K');
@@ -434,11 +435,11 @@ create or replace package body p_double_metaphone is
     v_index := ch_index;
     if (is_contain(char_at(str_value, ch_index + 2), 'I,E,H')) and
        (substr(str_value, ch_index + 2, 2) <> 'HU')
-    
+
      then
       if ((ch_index = 2 and substr(str_value, ch_index - 1, 1) = 'A') or
          (is_contain(substr(str_value, ch_index - 1, 5), 'UCCEE,UCCES')))
-      
+
        then
         str_result    := concat(str_result, 'KS');
         str_alternate := concat(str_alternate, 'KS');
@@ -525,7 +526,7 @@ create or replace package body p_double_metaphone is
                     str_alternate   in out varchar2,
                     ch_index        in number,
                     isslavogermanic in boolean) return int is
-  
+
   begin
     if (char_at(str_value, ch_index + 1) = 'H') then
       return handle_gh(str_value, str_result, str_alternate, ch_index);
@@ -636,9 +637,9 @@ create or replace package body p_double_metaphone is
                     str_result    in out varchar2,
                     str_alternate in out varchar2,
                     ch_index      in int) return int is
-  
+
   begin
-  
+
     if ((ch_index = 1 or is_vowel(char_at(str_value, ch_index - 1))) and
        is_vowel(char_at(str_value, ch_index + 1))) then
       str_result    := concat(str_result, 'H');
@@ -655,9 +656,9 @@ create or replace package body p_double_metaphone is
                     str_alternate   in out varchar2,
                     ch_index        int,
                     isslavogermanic boolean) return int is
-  
+
   begin
-  
+
     if (is_contain(substr(str_value, ch_index, 4), 'JOSE,SAN ')) then
       if ((ch_index = 1 and char_at(str_value, ch_index + 4) = ' ') or
          length(str_value) = 4 or
@@ -685,15 +686,15 @@ create or replace package body p_double_metaphone is
         str_result    := concat(str_result, 'J');
         str_alternate := concat(str_alternate, 'J');
       end if;
-    
+
       if (char_at(str_value, ch_index + 1) = 'J') then
         return ch_index + 2;
       else
         return ch_index + 1;
       end if;
-    
+
     end if;
-  
+
   end;
   -----------------------------------------------------------------------------------------
   function handle_l(str_value     in varchar2,
@@ -762,7 +763,7 @@ create or replace package body p_double_metaphone is
                     str_alternate   in out varchar2,
                     ch_index        in int,
                     isslavogermanic in boolean) return int is
-  
+
   begin
     if is_contain(substr(str_value, ch_index - 1, 3), 'ISL,YSL') then
       return ch_index + 1;
@@ -815,7 +816,7 @@ create or replace package body p_double_metaphone is
       else
         return ch_index + 1;
       end if;
-    
+
     end if;
     return ch_index;
   end;
@@ -824,7 +825,7 @@ create or replace package body p_double_metaphone is
                      str_result    in out varchar2,
                      str_alternate in out varchar2,
                      ch_index      in int) return int is
-  
+
   begin
     if (char_at(str_value, ch_index + 2) = 'H') then
       if is_contain(substr(str_value, ch_index + 3, 2), 'OO,ER,EN,UY,ED,EM') then
@@ -861,9 +862,9 @@ create or replace package body p_double_metaphone is
                     str_result    in out varchar2,
                     str_alternate in out varchar2,
                     ch_index      in int) return int is
-  
+
   begin
-  
+
     if substr(str_value, ch_index, 4) = 'TION' then
       str_result    := concat(str_result, 'X');
       str_alternate := concat(str_alternate, 'X');
@@ -901,7 +902,7 @@ create or replace package body p_double_metaphone is
                     str_result    in out varchar2,
                     str_alternate in out varchar2,
                     ch_index      in int) return int is
-  
+
   begin
     if substr(str_value, ch_index, 2) = 'WR' then
       str_result    := concat(str_result, 'R');
@@ -916,7 +917,7 @@ create or replace package body p_double_metaphone is
         else
           str_result    := concat(str_result, 'A');
           str_alternate := concat(str_alternate, 'A');
-        
+
         end if;
         return ch_index + 1;
       elsif (ch_index = length(str_value) and
@@ -941,7 +942,7 @@ create or replace package body p_double_metaphone is
                     str_result    in out varchar2,
                     str_alternate in out varchar2,
                     ch_index      int) return int is
-  
+
   begin
     if ch_index = 1 then
       str_result    := concat(str_result, 'S');
@@ -967,7 +968,7 @@ create or replace package body p_double_metaphone is
                     str_alternate     in out varchar2,
                     ch_index          int,
                     is_slavo_germanic in boolean) return int is
-  
+
     v_new_index int;
   begin
     if (char_at(str_value, ch_index + 1) = 'H') then
@@ -1152,9 +1153,9 @@ create or replace package body p_double_metaphone is
     if (str_target is null or str_search is null) then
       return false;
     end if;
-  
+
     v_array := split_2_table(str_search);
-  
+
     for i in 1 .. v_array.count loop
       if (instr(str_target, v_array(i)) > 0) then
         return true;
